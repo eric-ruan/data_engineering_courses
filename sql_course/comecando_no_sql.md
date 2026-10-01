@@ -194,3 +194,47 @@ Eles servem para fazer com que duas condições produzam um resultado único. Os
 - **AND**: retorna *TRUE* se ambas as condições forem verdadeiras.
 - **OR**: retorna *TRUE* se uma das condições forem verdadeiras.
 - **NOT**: retorna *TRUE* se a condição seguinte for falsa.
+
+# *INNER JOIN*:
+Ele serve para juntar dados de duas tabelas, retornando a linhas que tem correspondência entre elas:
+```sql
+SELECT *
+FROM customer
+INNER JOIN payment ON customer.customer_id = payment.customer_id
+```
+Afora se quisermos fazer filtros nessa consulta, para retornar valores que queremos ver, fazemos assim:
+```sql
+SELECT
+    customer.customer_id,
+    customer.first_name,
+    customer.last_name,
+    payment.rental_id,
+    payment.amount
+FROM customer
+INNER JOIN payment ON customer.customer_id = payment.customer_id
+```
+Podems também dar um  nome para as tabelas, assim não precisamos ficar digitando os nomes delas à todo momento. Isso se chama *Alias*.
+```sql
+SELECT
+    cus.customer_id,
+    cus.first_name,
+    cus.last_name,
+    pay.rental_id,
+    pay.amount
+FROM customer AS cus
+INNER JOIN payment AS pay ON cus.customer_id = pay.customer_id
+```
+Nós podemos também usar vários *JOINs* em uma consulta, podemos fazer com 3 tabelas ou mais, segue o exemplo com 3 tabelas:
+```sql
+SELECT
+    cus.customer_id,
+    cus.first_name,
+    cus.last_name,
+    pay.rental_id,
+    pay.amount
+FROM customer AS cus
+INNER JOIN payment AS pay
+    ON cus.customer_id = pay.customer_id
+INNER JOIN address AS adr
+    ON cus.address_id = adr.address_id
+```
