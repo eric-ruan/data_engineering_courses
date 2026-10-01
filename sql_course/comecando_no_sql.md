@@ -238,3 +238,78 @@ INNER JOIN payment AS pay
 INNER JOIN address AS adr
     ON cus.address_id = adr.address_id
 ```
+# Adicionando uma linha na tabela:
+Para inserir dados em uma tabela nós usamos o ```INSERT INTO```. Primeiro é interessante rodar o comando: ```DESCRIBE banco.tabela``` para ter as informações da tabela. Nós também não precisamos preencher com valor o campo que é *"auto-increment"*, para isso usamos o *"DEFAULT"*:
+```sql
+INSERT INTO language
+VALUES(DEFAULT, 'Portuguese', '2026-10-01 17:10:19');
+```
+
+# Inserindo várias linhas à uma tabela:
+Para isso, basta copiar o comado *VALUES*. Em outras palavras, basta inserir várias tuplas:
+```sql
+INSERT INTO language
+VALUES
+    (DEFAULT, 'Spanish', '2026-10-01 17:20:00'),
+    (DEFAULT, 'Polish', '2026-10-01 17:30:00');
+```
+
+# Inserindo dados em múltiplas tabelas:
+Isso é necessário porque as vezes queremos fazer inserção de dados em uma tabela que tem relacionamento com outra tabela. No exemplo abaixo, eu quero inserir uma nova cidade na tabela *"city"*, mas nessa tabela tem uma coluna *"country_id"*, ou seja, uma tabela está se relacionando com a outra. Para resolver esse problema nós usamos uma função do SQL que se chama *"LAST_INSERT_ID()"*. O script vai ficar assim:
+```sql
+INSERT INTO country
+VALUES
+    (DEFAULT, 'Brasil2', '2026-10-01 18:55:20');
+
+INSERT INTO city
+VALUES
+    (DEFAULT, 'Sao Paulo2', LAST_INSERT_ID(), '2026-10-01 18:55:20');
+```
+
+# Copiar uma tabela:
+Tem diversos motivos pelos quais fazer a cópia de uma tabela. Um desses é para backup. Para fazer isso, basta usar o comando abaixo:
+```sql
+CREAT TABLE payment_backup AS
+SELECT * FROM payment
+```
+Basicamente você digita o comando para criar a tabela e passa o *SELECT* para o banco retornar a tabela que você quer copiar.
+
+# Removendo uma tabela:
+Existem dois tipos de remoção:
+- **TRUNCATE TABLE**: apaga todos os dados da tabela deixando-a vazia, mas com toda a estrutura, ou seja, as colunas.
+```sql
+TRUNCATE TABLE payment_backup;
+```
+
+- **DROP TABLE**: remove todo o esquema da tabela, ou seja, apaga todos os dados e exclui a tabela.
+```sql
+DROP TABLE payment_backup;
+```
+
+# Atualizando um valor:
+Se eu quero alterar um determinado valor de uma tabela, eu uso o comando *UPDATE*, no exemplo abaixo, eu estou alterando o *"amount"* para *15.99* no *id 1*.
+```sql
+UPDATE payment
+SET
+    amount = 15.99
+WHERE
+    payment_id = 1;
+```
+Também podemos alterar várias linhas de uma só vez, apenas colocando os outros valores em baixo e separando por vírgula, assim:
+```sql
+UPDATE payment
+SET
+    amount 15.99,
+    payment_date = '2026-01-01 01:01:01',
+    last_update = '2026-10-01 20:15:00'
+WHERE
+    payment = 2;
+```
+
+# Deletando um valor:
+Como o nome já sugere, esse comando serve para deletar um valor na tabela. Para isso, fazemos assim:
+```sql
+DELETE FROM payment
+WHERE payment_id = 16049;
+```
+Nesse exemplo de cima eu estou deletando a linha do **id 16049**.
