@@ -313,3 +313,93 @@ DELETE FROM payment
 WHERE payment_id = 16049;
 ```
 Nesse exemplo de cima eu estou deletando a linha do **id 16049**.
+
+# Introdução a funções:
+Funções basicamente são códigos que já estão criados e prontos para nós usarmos.
+
+# Aplicando funções básicas:
+Nesse exemplo abaixo temos 3 problemas, eu quero saber qual foi a minha **maior venda**, a minha **menor venda** e a **média de vendas**. Funções:
+- **MAX()**: serve para consultar o valor máximo de uma coluna, nesse caso o valor da maior venda:
+```sql
+SELECT MAX(amount) AS Maior
+FROM payment;
+```
+
+- **MIN()**: serve para consultar o valor mínimo de uma coluna, nesse caso o valor da menor venda:
+```sql
+SELECT MIN(amount) AS Menor
+FROM payment;
+```
+
+- **AVG()**: serve para consultar o valor médio de uma coluna, nesse caso a média de vendas:
+```sql
+SELECT AVG(amount) AS Media
+FROM payment;
+```
+
+# Utilizando o *COUNT()* e o *SUM()*
+Como os próprios nomes sugerem, essas funções são de **contagem** e **soma**.
+- **COUNT()**: é usado para contar valor em uma coluna, no exemplo abaixo eu estou querendo saber o total de vendas:
+```sql
+SELECT COUNT(amount) AS 'Numero de Vendas'
+FROM payment;
+```
+
+- **SUM()**: é usado para somar valores em uma coluna, no exemplo abaixo eu estou querendo saber a soma total de vendas:
+```sql
+SELECT SUM(amount) AS 'Total de Vendas'
+FROM payment;
+```
+Nós também podemos usar o *WHERE* para fazer filtros na tabela, por exemplo, saber o valor total de vendas e a quantidade de vendas de uma determinada pessoa, usamos:
+```sql
+SELECT
+    COUNT(amount) AS 'Numero de Vendas',
+    SUM(amount) AS 'Total de Vendas'
+FROM payment
+WHERE staff_id = 1
+```
+
+# Agrupando os clientes:
+Nessa etapa nós vamos ver quanto cada cliente gastou dentr da locadora. Por exemplo, eu quero saber quanto o cliente *1* gastou, quanto o cliente *2* gastou e assim por diante. Também quero ordenar os valores do mais gasto para o menos gasto. Para isso, vamos usar uma função, a de soma *SUM()*, usar o *GROUP BY* e usar o *ORDER BY*, ficando assim:
+```sql
+SELECT
+    customer_id,
+    SUM(amount) AS Total
+FROM payment
+GROUP BY customer_id
+ORDER BY Total DESC;
+```
+
+# Ordenando os clientes:
+Imaginemos que o time de marketing pede um relatório para entender quem foi os clientes que mais compraram, mas eles não querem saber o *ID* desses clientes, eles querem saber o nome. Então nesse caso fazemos um *INNER JOIN* de duas colunas, a de **customer** e a de **payment** e depois ordenamos:
+```sql
+SELECT
+    cus.customer_id AS ID,
+    cus.first_name AS Nome,
+    cus.last_name AS Sobrenome,
+    SUM(pay.amount) AS Total
+FROM payment AS pay
+INNER JOIN customer AS cus
+ON cus.customer_id = pay.customer_id
+
+GROUP BY ID
+ORDER BY Total DESC
+```
+
+# Filtrando os valores com *HAVING*:
+Nesse problema, nós precisamos mostrar em resultado os clientes que gastaram mais de *$150 dolares*. Nesse caso nós não usaremos o *WHERE* e sim o *HAVING*. Além disso, irei mostrar no relatório também o valor total de compras do cliente, mas dessa vez, vou exibir apenas os clientes que tiveram mais de *35 compras*. Fica assim:
+```sql
+SELECT
+    cus.customer_id AS ID,
+    cus.first_name AS Nome,
+    cus.last_name AS Sobrenome,
+    SUM(pay.amount) AS Total,
+    COUNT(pay.amount) AS Compras
+FROM payment AS pay
+INNER JOIN customer AS cus
+ON cus.customer_id = pay.customer_id
+
+GROUP BY ID
+HAVING Total >= 150 AND Compras >= 35
+ORDER BY Total DESC
+```
